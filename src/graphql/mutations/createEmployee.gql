@@ -1,0 +1,43 @@
+mutation(
+    $name: String!,
+    $salary: Int!,
+    $position: String!,
+    $phone: String,
+    $email: String,
+    $address: String,
+    $photo: String,
+    $joined_at: DateTime,
+    $is_active: Boolean,
+    $department_id: ID!
+){
+  createEmployee(
+    name: $name,
+    salary: $salary,
+    position: $position,
+    phone: $phone,
+    email: $email,
+    address: $address,
+    photo: $photo,
+    joined_at: $joined_at,
+    is_active: $is_active,
+    department_id: $department_id
+  ){
+    id
+    name
+    salary
+    position
+    phone
+    email
+    address
+    photo
+    joined_at
+    is_active
+        department_id
+    department {
+        id
+        name
+    }
+    created_at
+    updated_at
+  }
+}

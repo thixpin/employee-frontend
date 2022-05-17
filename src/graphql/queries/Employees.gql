@@ -1,0 +1,24 @@
+query($page: Int) {
+    employees(page: $page) {
+        data {
+            id
+            name
+            email
+            phone
+            department{
+                id
+                name
+            }
+        }
+        paginatorInfo{
+            total
+            count
+            perPage
+            currentPage
+            hasMorePages
+            firstItem
+            lastItem
+            lastPage
+        }
+    }
+}

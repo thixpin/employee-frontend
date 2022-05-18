@@ -3,8 +3,9 @@
   <ApolloQuery :query="require('@/graphql/queries/Employees.gql')" :variables="{ page: parseInt($route.params.page) }">
     <template slot-scope="{ result: { data }, isLoading }">
       <div class="add-employee">
-        <router-link :to="{ name: 'addEmployee' }">
-          <button class="btn btn-primary"> + Add Employee</button>
+        <h4 v-if="!authToken"> Please  <router-link to="/login">login</router-link> to edit data </h4>
+        <router-link v-else :to="{ name: 'addEmployee' }">
+          <button  class="btn btn-primary"> + Add Employee</button>
         </router-link>
       </div>
       <table class="table">
@@ -34,7 +35,7 @@
               <router-link :to="{ name: 'employee', params: { id: employee.id } }">
                 <button class="btn btn-primary">View</button>
               </router-link>
-              <button class="btn-delete" @click="deleteEmployee(employee.id)">Delete</button>
+              <button v-if="authToken" class="btn-delete" @click="deleteEmployee(employee.id)">Delete</button>
             </td>
           </tr>
         </tbody>
@@ -72,11 +73,14 @@
 
 <script>
 import deleteEmployeeMutate from '@/graphql/mutations/deleteEmployee.gql'
+import { getToken } from '../vue-apollo.js'
 
 export default {
   name: 'EmployeesList',
-  props: {
-    msg: String
+  data() {
+    return {
+      authToken: getToken()
+    }
   },
   methods: {
     changePage(page) {
@@ -100,12 +104,7 @@ export default {
             type: 'success',
             position: 'top'
           })
-          this.$router.push({
-            name: 'employees',
-            params: {
-              page: this.$route.params.page
-            }
-          })
+          this.$router.go(0);
         }
       }).catch(err => {
         this.$toast.open({
@@ -114,7 +113,6 @@ export default {
           position: 'top'
         })
       })
-      // console.log(id)
     }
   }
 

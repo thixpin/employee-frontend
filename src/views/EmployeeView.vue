@@ -2,9 +2,9 @@
   <div class="employee">
     <div v-if="employee" class="row">
 
-      <div class="action">
-        <button @click="deleteEmployee(employee.id)">Delete</button>
-        <router-link :to="'/employees/' + employee.id + '/edit'">Edit</router-link>
+      <div class="action" v-if="authToken">
+        <router-link class="btn" :to="'/employees/' + employee.id + '/edit'">Edit</router-link>
+        <a href="javascript:" class="btn btn-danger" @click="deleteEmployee(employee.id)">Delete</a>
       </div>
       <h2>{{ employee.name }} </h2>
       <h4> {{ employee.position }}, {{ employee.department.name }} Department</h4>
@@ -13,25 +13,27 @@
       <p>Email: {{ employee.email }}</p>
       <p>Phone: {{ employee.phone }}</p>
       <p>Address: {{ employee.address }}</p>
-      <p>JoinedDate: {{moment(employee.joined_at).format('YYYY-MMM-DD')}}</p>
+      <p>JoinedDate: {{ moment(employee.joined_at).format('YYYY-MMM-DD') }}</p>
       <p>Active: {{ employee.is_active }}</p>
       <p>Create: {{ employee.created_at }}</p>
       <p>Lest Update: {{ employee.updated_at }}</p>
 
-    
+
     </div>
   </div>
 </template>
 
 <script>
 import moment from 'moment'
+import { getToken } from '../vue-apollo.js'
 import EmployeeQuery from '@/graphql/queries/Employee.gql'
 import deleteEmployeeMutate from '@/graphql/mutations/deleteEmployee.gql'
 
 export default {
   name: 'EmployeeView',
-  data(){
+  data() {
     return {
+      authToken: getToken(),
       employee: null,
       id: this.$route.params.id
     }
@@ -58,13 +60,16 @@ export default {
           id
         }
       }).then(({ data }) => {
-        if(data.deleteEmployee) {
+        if (data.deleteEmployee) {
           this.$toast.open({
             message: 'Employee deleted',
             type: 'success',
             position: 'top'
           })
-          this.$router.push('/employees')
+          setTimeout(() => {
+            this.$router.push('/');
+            this.$router.go(0);
+          }, 1500);
         }
       }).catch(err => {
         this.$toast.open({
@@ -73,8 +78,27 @@ export default {
           position: 'top'
         })
       })
-      // console.log(id)
     }
   }
 }
 </script>
+
+
+<style scoped>
+.employee .action .btn{
+  max-width: 300px;
+  padding: 8px 20px;
+  margin: 8px;
+  border-radius: 3px;
+  box-sizing: border-box;
+  background-color: #4CAF50;
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+.employee .action .btn.btn-danger{
+  background-color: #f44336;
+}
+</style>

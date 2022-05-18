@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import { getToken } from '../vue-apollo.js'
 
 Vue.use(VueRouter)
 
@@ -9,6 +10,11 @@ const routes = [
     path: '/',
     name: 'home',
     component: HomeView
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('../views/LoginView.vue')
   },
   {
     path: '/about',
@@ -21,7 +27,8 @@ const routes = [
   {
     path: '/employees/add',
     name: 'addEmployee',
-    component: () => import('../views/AddEmployee.vue')
+    component: () => import('../views/AddEmployee.vue'),
+    meta: { requiresAuth: true }
   },
   {
     path: '/employees/page/:page',
@@ -36,7 +43,8 @@ const routes = [
   {
     path: '/employees/:id/edit',
     name: 'EditEmployee',
-    component: () => import('../views/EditEmployee.vue')
+    component: () => import('../views/EditEmployee.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 
@@ -44,6 +52,21 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if(to.meta.requiresAuth) {
+    const authToken = getToken()
+    if(!authToken) {
+      next({
+        name: 'login'
+      })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
 })
 
 export default router

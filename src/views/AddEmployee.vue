@@ -115,11 +115,13 @@ export default {
                 }
             }).then(({ data }) => {
                 this.$toast.open({
-                    message: 'Employee created successfully with id: ' + data.createEmployee.id,
+                    message: data.createEmployee.name + ' has been add to employee list',
                     type: 'success',
                     position: 'top'
                 });
-                this.$router.push({ name: 'Employees' });
+                setTimeout(() => {
+                    this.$router.go(0);
+                }, 1200);
             }).catch(error => {
                 this.$toast.open({
                     message: error.message,

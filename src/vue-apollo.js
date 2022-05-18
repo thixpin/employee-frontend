@@ -91,11 +91,20 @@ export async function onLogout (apolloClient) {
   if (typeof localStorage !== 'undefined') {
     localStorage.removeItem(AUTH_TOKEN)
   }
+  console.log(apolloClient)
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
   try {
     await apolloClient.resetStore()
   } catch (e) {
     // eslint-disable-next-line no-console
     console.log('%cError on cache reset (logout)', 'color: orange;', e.message)
+  }
+}
+
+export function getToken () {
+  if (typeof localStorage !== 'undefined') {
+    return localStorage.getItem(AUTH_TOKEN)
+  } else {
+    return null
   }
 }

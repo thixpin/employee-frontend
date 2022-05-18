@@ -14,8 +14,7 @@
 </template>
 
 <script>
-// import { loginMutation } from '@/graphql/mutations/login.gql'
-import gql from 'graphql-tag'
+import loginMutation from '@/graphql/mutations/authLogin.gql'
 import { onLogin } from '../vue-apollo.js'
 
 export default {
@@ -29,12 +28,7 @@ export default {
     methods: {
         login() {
             this.$apollo.mutate({
-                // mutation: loginMutation,
-                mutation: gql` mutation ($input: LoginInput!) {
-                    login(input: $input) {
-                        access_token
-                    }
-                }`,
+                mutation: loginMutation,
                 variables: {
                     input:{
                         username: this.email,

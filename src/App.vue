@@ -36,8 +36,7 @@ nav a.router-link-exact-active {
 
 <script>
 import { onLogout, getToken } from './vue-apollo.js'
-// import { currentUserQuery } from './graphql/queries/currentUser.gql'
-import gql from 'graphql-tag'
+import currentUserQuery  from './graphql/queries/currentUser.gql'
 
 export default {
   name: 'EmployeesList',
@@ -49,14 +48,10 @@ export default {
   },
   apollo: {
     currentUser: {
-      query: gql`
-        query currentUser {
-          currentUser {
-            id
-            name
-          }
-        }
-      `,
+      query: currentUserQuery,
+      result({ data }) {
+        this.currentUser = data.currentUser
+      }
     }
   },
   methods: {
